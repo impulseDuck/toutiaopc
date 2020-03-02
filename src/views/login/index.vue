@@ -72,9 +72,10 @@ export default {
           data: this.loginForm,
           method: 'post'
         }).then((result) => {
-          window.localStorage.setItem('use-token', result)
+          window.localStorage.setItem('use-token', result.data.data.token)
+          this.$router.push('/home')
         }).catch(() => {
-          console.log('错误')
+          this.$message.error('用户名或者密码错误')
         })
       })
     }

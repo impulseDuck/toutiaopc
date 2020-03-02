@@ -1,7 +1,11 @@
 <template>
-<div>
-<h1>我是主页</h1>
-</div>
+<el-container>
+    <el-aside>我是右侧</el-aside>
+   <el-container>
+        <el-header>我是上边</el-header>
+        <el-main>我是中间</el-main>
+   </el-container>
+</el-container>
 </template>
 
 <script>
