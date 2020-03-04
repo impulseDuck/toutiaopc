@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import Home from '@/views/home'
 import login from '@/views/login'
 import SecondHome from '@/views/home/second_home'
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -19,6 +18,10 @@ const routes = [
       {
         path: '',
         component: SecondHome
+      },
+      {
+        path: 'comment',
+        component: () => import('@/views/comment')
       }
     ]
   },

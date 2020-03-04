@@ -1,6 +1,6 @@
 <template>
 <div class="login">
-<el-card class="box-card">
+<el-card class="box-card" style="background-color:rgba(0,0,0,0.5)">
 <div class="title">
     <img src="@/assets/img/logo1.png" alt="" >
     <!-- <span style="font-size:25px;font-weight:700;">渲染</span> -->
@@ -72,7 +72,7 @@ export default {
           data: this.loginForm,
           method: 'post'
         }).then((result) => {
-          window.localStorage.setItem('user-token', result.data.data.token)
+          window.localStorage.setItem('user-token', result.data.token)
           this.$router.push('/home')
         }).catch(() => {
           this.$message.error('用户名或者密码错误')
@@ -105,7 +105,7 @@ height: 100vh;
 .box-card{
 width: 440px;
 height: 340px;
-background: url('../../assets/img/login_bgc.jpg');
+background: url('../../assets/img/2.png');
 z-index: 1
 }
 .title {

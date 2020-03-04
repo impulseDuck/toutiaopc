@@ -15,7 +15,7 @@
           </template>
         <el-menu-item index="/home/publish">发布文章</el-menu-item>
          <el-menu-item index="/home/content">内容列表</el-menu-item>
-         <el-menu-item index="/home/common">评论文章</el-menu-item>
+         <el-menu-item index="/home/comment">评论文章</el-menu-item>
          <el-menu-item index="/home/material">素材管理</el-menu-item>
   </el-submenu>
 <el-submenu index='2'>
@@ -47,6 +47,7 @@ export default {
     width:230px;
     height: 100vh;
     background-color: #2e2f32;
+    background-image: url('../../assets/img/3.png');
     .title{
         text-align: center;
         padding: 10px 0;

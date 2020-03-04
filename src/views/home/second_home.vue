@@ -27,7 +27,7 @@ export default {
 <style>
 .second-home {
   /* calc 计算的意思 在css中计算数值 用法  calc ( 四则运算  ) 变量之间 和运算符之间一定要有空格 */
-  height: calc(100vh - 80px);
+  height: calc(100vh - 20px);
   background-size: cover;
   background-color: black;
 }
