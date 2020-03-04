@@ -1,14 +1,21 @@
 <template>
 <el-container>
-    <el-aside>我是右侧</el-aside>
+    <el-aside style="width:230px">
+    <layout-Left></layout-Left>
+    </el-aside>
    <el-container>
-        <el-header>我是上边</el-header>
-        <el-main>我是中间</el-main>
+      <el-header>
+           <layout-Top></layout-Top>
+      </el-header>
+    <el-main style="padding: 0">
+            <router-view></router-view>
+    </el-main>
    </el-container>
 </el-container>
 </template>
 
 <script>
+
 export default {
 
 }
