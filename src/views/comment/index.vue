@@ -1,5 +1,5 @@
 <template>
-<el-card>
+<el-card v-loading="loading">
  <bread-crumb slot="header">
  <template slot="title">评论管理</template>
  </bread-crumb>
@@ -16,6 +16,14 @@
        </template>
     </el-table-column>
 </el-table>
+<el-row class="page" type="flex" justify="center">
+  <el-pagination background layout="prev,pager,next"
+:total="page.totalPage"
+:current-page="page.currentPage"
+:page-size="page.pageSize"
+@current-change="changePage">
+</el-pagination>
+</el-row>
 </el-card>
 </template>
 
@@ -23,19 +31,34 @@
 export default {
   data () {
     return {
-      list: []
+      list: [],
+      page: {
+        currentPage: 1,
+        pageSize: 10,
+        totalPage: 50
+      },
+      loading: false // 控制loading遮罩层的显示或者隐藏
     }
   },
   methods: {
+    changePage (newPage) {
+      this.page.currentPage = newPage
+      this.getComment()
+    },
     getComment () {
+      this.loading = true // 打开遮罩层
       this.$axios({
         url: '/articles', // 地址
         params: {
-          response_type: 'comment' // 数据类型
+          response_type: 'comment', // 数据类型
+          per_page: this.page.pageSize,
+          page: this.page.currentPage
         }
       }).then(result => {
         console.log(result)
         this.list = result.data.results // 将数据显示在页面
+        this.page.totalPage = result.data.total_count
+        this.loading = false // 关闭遮罩层
       })
     },
     formatterBoolean (row, column, cellvalue, index) {
@@ -45,16 +68,17 @@ export default {
       const mess = row.comment_status ? '关闭' : '显示'
       this.$confirm(`您是否确定${mess}评论`, '提示').then(() => {
         this.$axios({
-          url: 'comments/status',
+          url: '/comments/status',
           method: 'put',
           params: {
-            article_id: row.id // 文章id
+            article_id: row.id.toString() // 文章id
           },
           data: {
             allow_comment: !row.comment_status // 是打开还是关闭，此状态和文章评论正好相反
           }
         }).then(() => {
           this.$message.success(`${mess}评论成功`)
+          this.getComment() // 调用重新拉取数据的方法
         }).catch(() => {
           this.$message.error(`${mess}评论失败`)
         })
