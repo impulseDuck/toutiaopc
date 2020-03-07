@@ -12,19 +12,19 @@
     <el-tabs v-model="activeName" @tab-click="changeTab" class="tabs">
     <el-tab-pane label="全部素材" name="all">
     <div class="img-list">
-         <el-card class="card" v-for="item in list" :key='item.id'>
-            <img :src="item.url" alt="">
+         <el-card class="card" v-for="(item,index) in list" :key='item.id'>
+            <img :src="item.url" alt="" @click="clickImg(index)">
             <el-row class="div" type="flex" align="middle" justify="space-around">
-                <i class="el-icon-star-on"></i>
-                <i class="el-icon-delete-solid"></i>
+                <i class="el-icon-star-on" @click="collectOrCancel(item)" :style="{color:item.is_collected ? 'red' : 'black'}"></i>
+                <i class="el-icon-delete-solid" @click="del(item)"></i>
             </el-row>
         </el-card>
     </div>
     </el-tab-pane>
     <el-tab-pane label="收藏素材" name="collect">
         <div class="img-list">
-            <el-card class="card" v-for="item in list" :key='item.id'>
-            <img :src="item.url" alt="">
+            <el-card class="card" v-for="(item, index) in list" :key='item.id'>
+            <img :src="item.url" alt="" @click="clickImg(index)">
         </el-card>
     </div>
     </el-tab-pane>
@@ -38,6 +38,14 @@
     @current-change="changePage">
 </el-pagination>
 </el-row>
+<!-- 预览时候弹出对话框  走马灯-->
+  <el-dialog :visible="dialogTableVisible" @opened="openEnd" @close="dialogTableVisible=false">
+    <el-carousel indicator-position="outside" height="400px" ref="myCarousel">
+      <el-carousel-item v-for="item in list" :key="item.id">
+          <img :src="item.url" alt="" style="width:100%;height:100%">
+      </el-carousel-item>
+    </el-carousel>
+  </el-dialog>
 </el-card>
 </template>
 
@@ -50,12 +58,51 @@ export default {
       page: {
         total: 10,
         currentPage: 1,
-        pageSize: 10
-
-      }
+        pageSize: 4
+      },
+      dialogTableVisible: false,
+      clickIndex: -1
     }
   },
   methods: {
+    // 当点击图片时弹出对应的预览图片
+    clickImg (index) {
+      this.clickIndex = index // 给索引赋值
+      this.dialogTableVisible = true // 将对话框打开
+    },
+    // 弹出对话框对应的index
+    openEnd () {
+      this.$refs.myCarousel.setActiveItem(this.clickIndex)
+    },
+
+    // 点击删除的时候
+    del (row) {
+      this.$confirm('您确定删除吗？', '提示').then(() => {
+        this.$axios({
+          url: `/user/images/${row.id}`,
+          method: 'delete'
+        }).then(() => {
+          this.getMaterial()
+        }).catch(() => {
+          this.$message.error('删除失败')
+        })
+      })
+    },
+    // 当点击收藏或者取消的时候
+    collectOrCancel (row) {
+      this.$axios({
+        url: `/user/images/${row.id}`,
+        method: 'put',
+        data: {
+          collect: !row.is_collected // 收藏与否
+        }
+      }).then(() => {
+        this.getMaterial()
+      }).catch(() => {
+        this.$message.error('收藏/取消失败')
+      })
+    },
+
     //   当点击上传素材的时候
     uploadImg (params) {
       const data = new FormData()
