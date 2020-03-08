@@ -13,7 +13,7 @@
           <i class="el-icon-menu"></i>
           <span>内容管理</span>
           </template>
-        <el-menu-item index="/home/publish">发布文章</el-menu-item>
+        <el-menu-item index="/home/publish?">发布文章</el-menu-item>
          <el-menu-item index="/home/content">内容列表</el-menu-item>
          <el-menu-item index="/home/comment">评论文章</el-menu-item>
          <el-menu-item index="/home/material">素材管理</el-menu-item>

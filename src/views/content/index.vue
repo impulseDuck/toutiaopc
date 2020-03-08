@@ -19,12 +19,14 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日期范围">
-        <el-date-picker placeholder="请选择日期" type="date" v-model="searchFrom.dateRange">
+        <el-date-picker type="daterange" v-model="searchFrom.dateRange"
+        start-placeholder="开始日期"  end-placeholder="结束日期"
+        value-format="yyyy-MM-dd">
         </el-date-picker>
       </el-form-item>
     </el-form>
     <el-row class="total">
-        <p>共找到1000条符合条件的内容</p>
+        <p>共找到{{page.total}}条符合条件的内容</p>
     </el-row>
     <div class="content-item" v-for="item in list" :key="item.id.toString()">
       <div class="content-left">
@@ -36,10 +38,18 @@
           </div>
       </div>
       <div class="content-right">
-        <span><i class="el-icon-delete"></i>删除</span>
-        <span><i class="el-icon-edit"></i>修改</span>
+        <span @click="delItem(item.id.toString())"><i class="el-icon-delete"></i>删除</span>
+        <span @click="$router.push(`/home/publish/${item.id.toString()}`)">
+          <i class="el-icon-edit"></i>修改</span>
       </div>
     </div>
+   <el-row type="flex" justify="center" style="height:80px" align="middle">
+      <el-pagination background layout="prev,pager,next"
+      :total="page.total"
+      :page-size="page.pageSize"
+      :current-page="page.currentPage"
+      @current-change="changePage"></el-pagination>
+   </el-row>
   </el-card>
 </template>
 
@@ -47,6 +57,12 @@
 export default {
   data () {
     return {
+      // page
+      page: {
+        total: 10,
+        pageSize: 10,
+        currentPage: 1
+      },
       // 定义表单数据对象
       searchFrom: {
         status: 5,
@@ -56,6 +72,15 @@ export default {
       channel: [],
       list: [],
       defaultImg: require('../../assets/img/2.png')
+    }
+  },
+  watch: {
+    searchFrom: {
+      deep: true,
+      handler () {
+        this.page.currentPage = 1
+        this.changeCondation()
+      }
     }
   },
   filters: {
@@ -88,7 +113,41 @@ export default {
       }
     }
   },
+
   methods: {
+    // 删除
+    delItem (id) {
+      this.$confirm('你确定要删除吗？', '提示').then(() => {
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${id}`
+        }).then(() => {
+          this.changeCondation()
+        }).catch(() => {
+          this.$message.error('删除失败')
+        })
+      })
+    },
+    // 页面切换
+    changePage (newPage) {
+      this.page.currentPage = newPage// 最新页码
+      this.changeCondation()// 直接调用改变事件的方法
+    },
+    // 改变条件
+    changeCondation () {
+      const params = {
+        page: this.page.currentPage,
+        per_page: this.page.pageSize,
+        // 文章状态
+        status: this.searchFrom.status === 5 ? null : this.searchFrom.status,
+        channel_id: this.searchFrom.channel_id,
+        begin_pubdate: this.searchFrom.dateRange && this.searchFrom.dateRange.length ? this.searchFrom.dateRange[0] : null,
+        end_pubdate: this.searchFrom.dateRange && this.searchFrom.dateRange.length > 1 ? this.searchFrom.dateRange[1] : null
+      }
+      // 通过接口传入
+      this.getContent(params) // 直接调用获取的方法
+    },
+
     // 获取文章频道
     getChannel () {
       this.$axios({
@@ -98,11 +157,14 @@ export default {
       })
     },
     // 获取文章列表
-    getContent () {
+    getContent (params) {
       this.$axios({
-        url: '/articles'
+        url: '/articles',
+        params
       }).then(result => {
         this.list = result.data.results
+        // 将总数赋值给文章列表
+        this.page.total = result.data.total_count
       })
     }
   },

@@ -1,8 +1,13 @@
 <template>
 <div class="second-home">
-   <el-carousel type="card" height="500px">
+   <el-carousel type="card" height="200px" style="padding-top:100px" >
    <el-carousel-item v-for="item in list" :key=item>
-  <img :src="item" alt="">
+  <img :src="item" alt="" style="width:100%">
+   </el-carousel-item>
+ </el-carousel>
+   <el-carousel type="card" height="200px" style="margin-top:250px">
+   <el-carousel-item v-for="item in list" :key=item>
+  <img :src="item" alt="" style="width:100%">
    </el-carousel-item>
  </el-carousel>
 </div>
@@ -29,7 +34,7 @@ export default {
   /* calc 计算的意思 在css中计算数值 用法  calc ( 四则运算  ) 变量之间 和运算符之间一定要有空格 */
   height: calc(100vh - 20px);
   background-size: cover;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 </style>
