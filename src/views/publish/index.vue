@@ -17,12 +17,13 @@
         <quill-editor v-model="publishFrom.content" style="height:300px" ></quill-editor>
       </el-form-item>
       <el-form-item label="封面" prop="cover" style="margin-top:120px">
-        <el-radio-group v-model="publishFrom.cover.type">
+        <el-radio-group v-model="publishFrom.cover.type" @change="changeType">
           <el-radio :label="1">单面</el-radio>
           <el-radio :label="3">三图</el-radio>
           <el-radio :label="0">无图</el-radio>
           <el-radio :label="-1">自动</el-radio>
         </el-radio-group>
+        <cover-image :list="publishFrom.cover.images" @selectTwoImg="recevieImg"></cover-image>
       </el-form-item>
       <el-form-item label="频道" prop="channel_id">
         <el-select placeholder="请选择频道" v-model="publishFrom.channel_id">
@@ -69,7 +70,21 @@ export default {
     }
   },
   methods: {
-    //
+    // 接收文件
+    recevieImg (url, index) {
+    //  接收到了传递过来的封面数据
+      this.publishFrom.cover.images.splice(index, 1, url)
+    },
+    // 切换cover状态
+    changeType () {
+      if (this.publishFrom.cover.type === 1) {
+        this.publishFrom.cover.images = ['']
+      } else if (this.publishFrom.cover.type === 3) {
+        this.publishFrom.cover.images = ['', '', '']
+      } else {
+        this.publishFrom.cover.images = []
+      }
+    },
     // 发布
     publish (draft) {
       this.$refs.myForm.validate().then(() => {
@@ -106,6 +121,24 @@ export default {
       }).then(result => {
         this.publishFrom = result.data // 将频道赋值给本地数据
       })
+    }
+  },
+  // 同意路径下的页面切换时，
+  watch: {
+    $route: function (to, from) {
+      if (to.params.articleId) {
+        this.getArticleByid(to.params.articleId)// 获取文章id
+      } else {
+        this.publishFrom = {
+          title: '', // 文章标题
+          content: '', // 文章内容
+          cover: {
+            type: 0, // 封面类型
+            images: [] // 封面图片
+          },
+          channel_id: null // 频道id
+        }
+      }
     }
   },
 
