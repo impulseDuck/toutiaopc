@@ -1,7 +1,7 @@
 <template>
   <el-row align="middle" type='flex' class='layout-header'>
       <el-col class='left' :span="12">
-         <i class='el-icon-s-fold'></i>
+         <i :class="{'el-icon-s-fold' : !collapse ,'el-icon-s-unfold':collapse}" @click="collapse=!collapse"></i>
         <span>人间不值得</span>
     </el-col>
 <!-- 右侧 -->
@@ -22,13 +22,22 @@
 </template>
 
 <script>
+import eventBus from '@/utils/eventBus'
+
 export default {
   data () {
     return {
-      userInfo: {}
+      userInfo: {},
+      collapse: false
+    }
+  },
+  watch: {
+    collapse () {
+      eventBus.$emit('changeCollapse')// 触发一个改变折叠状态
     }
   },
   methods: {
+    // 点击菜单
     clickMenu (command) {
       if (command === 'info') {
 
@@ -38,15 +47,22 @@ export default {
         window.localStorage.removeItem('user-token')
         this.$router.push('/login')
       }
+    },
+    getUserInfo () {
+      this.$axios({
+        url: 'user/profile'
+      }).then(result => {
+        this.userInfo = result.data
+      })
     }
   },
   created () {
-    this.$axios({
-      url: 'user/profile'
-    }).then(result => {
-      this.userInfo = result.data
+    this.getUserInfo()
+    eventBus.$on('updateUser', () => {
+      this.getUserInfo()
     })
   }
+
 }
 </script>
 

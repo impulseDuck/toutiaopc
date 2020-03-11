@@ -54,6 +54,9 @@
 </template>
 
 <script>
+import { getChannel } from '@/api/channels.js'
+import { getContent } from '@/api/content'
+
 export default {
   data () {
     return {
@@ -71,7 +74,7 @@ export default {
       },
       channel: [],
       list: [],
-      defaultImg: require('../../assets/img/2.png')
+      defaultImg: require('../../assets/img/head.jpg')
     }
   },
   watch: {
@@ -149,23 +152,16 @@ export default {
     },
 
     // 获取文章频道
-    getChannel () {
-      this.$axios({
-        url: '/channels'
-      }).then(result => {
-        this.channel = result.data.channels
-      })
+    async  getChannel () {
+      const result = await getChannel()
+      this.channel = result.data.channels
     },
     // 获取文章列表
-    getContent (params) {
-      this.$axios({
-        url: '/articles',
-        params
-      }).then(result => {
-        this.list = result.data.results
-        // 将总数赋值给文章列表
-        this.page.total = result.data.total_count
-      })
+    async getContent (params) {
+      const result = await getContent(params)
+      this.list = result.data.results
+      // 将总数赋值给文章列表
+      this.page.total = result.data.total_count
     }
   },
   created () {
@@ -192,6 +188,8 @@ export default {
     display: flex;
     img{
       height: 180px;
+      width: 210px;
+      padding-right: 20px;
     }
     .info{
       height: 180px;

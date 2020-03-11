@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="myCanvas" style="border: 2px dashed #ccc;" width="500" height="500"></canvas>
+    <button onclick="drawLine()">画线</button>
+    <button onclick="drawRect()">矩形</button>
+    <button onclick="drawARC()">圆形</button>
+    <button onclick="drawLine1()">自由画线</button>
+</body>
+<script>
+    // 画笔作画 context
+    // 画笔等于canvas的dom对象调用
+    var context = document.getElementById('myCanvas').getContext('2d')
+    var drawLine = function () {
+        context.beginPath()//开始一个路径
+        context.moveTo(0, 0) //来到左上角
+        context.lineTo(500, 500) //从起点到终点
+        context.lineWidth = 4//调整线的宽度
+        context.stroke()
+        context.closePath() //关闭当前路径
+    }
+    // 画矩形
+    var drawRect = function () {
+        context.fillStyle = '#000000'
+        // context.strokeRect(0, 0, 500, 500)
+        context.beginPath()
+        context.fillRect(0, 0, 500, 500)
+        context.closePath()
+    }
+    // 画圆
+    drawARC = function () {
+        context.arc(250, 250, 100, 0, 2 * Math.PI)
+        context.stroke()
+    }
+    // 自由划线
+    var drawLine1 = function () {
+        context.lineWidth = 8
+        context.stroke()
+        context.strokeStyle = 'blue'
+        // 
+        var ev = ev || event
+        myCanvas.onmousedown = function (ev) {
+            context.moveTo(ev.clientX, ev.clientY)
+            document.onmousemove = function (ev) {
+                context.lineTo(ev.clientX, ev.clientY)
+                context.stroke()
+            }
+            document.onmouseup = function () {
+                document.onmousemove = document.onmouseup = null
+
+
+            }
+        }
+
+    }
+</script>
+
+</html>

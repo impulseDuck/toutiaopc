@@ -45,29 +45,30 @@ export default {
       this.page.currentPage = newPage
       this.getComment()
     },
-    getComment () {
+    async getComment () {
       this.loading = true // 打开遮罩层
-      this.$axios({
+      const result = await this.$axios({
         url: '/articles', // 地址
         params: {
           response_type: 'comment', // 数据类型
           per_page: this.page.pageSize,
           page: this.page.currentPage
         }
-      }).then(result => {
-        console.log(result)
-        this.list = result.data.results // 将数据显示在页面
-        this.page.totalPage = result.data.total_count
-        this.loading = false // 关闭遮罩层
       })
+      // console.log(result)
+      this.list = result.data.results // 将数据显示在页面
+      this.page.totalPage = result.data.total_count
+      this.loading = false // 关闭遮罩层
     },
+    // 定义一个格式化的函数
     formatterBoolean (row, column, cellvalue, index) {
       return cellvalue ? '正常' : '关闭'
     },
-    openClose (row) {
+    async openClose (row) {
       const mess = row.comment_status ? '关闭' : '显示'
-      this.$confirm(`您是否确定${mess}评论`, '提示').then(() => {
-        this.$axios({
+      await this.$confirm(`您是否确定${mess}评论`, '提示')
+      try {
+        await this.$axios({
           url: '/comments/status',
           method: 'put',
           params: {
@@ -79,10 +80,10 @@ export default {
         }).then(() => {
           this.$message.success(`${mess}评论成功`)
           this.getComment() // 调用重新拉取数据的方法
-        }).catch(() => {
-          this.$message.error(`${mess}评论失败`)
         })
-      })
+      } catch (error) {
+        this.$message.error(`${mess}评论失败`)
+      }
     }
   },
   created () {

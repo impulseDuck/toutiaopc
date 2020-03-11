@@ -1,9 +1,9 @@
 <template>
 <div class="layout-Left">
    <div class="title">
-        <img src="../../assets/img/logo1.png" alt="">
+        <img :src="collapse ? smallImg : bigImg" alt="">
    </div>
-  <el-menu background-color="#323745" text-color="#fff" router>
+  <el-menu background-color="#323745" text-color="#fff" router :collapse="collapse">
        <el-menu-item index='/home'>
        <i class="el-icon-s-home"></i>
        <span>首页</span>
@@ -38,7 +38,13 @@
 
 <script>
 export default {
-
+  props: ['collapse'], // 接收父组件传出来的变量
+  data () {
+    return {
+      bigImg: require('../../assets/img/logo1.png'),
+      smallImg: require('../../assets/img/head.jpg')
+    }
+  }
 }
 </script>
 

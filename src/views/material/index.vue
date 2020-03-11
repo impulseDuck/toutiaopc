@@ -50,6 +50,8 @@
 </template>
 
 <script>
+import { getMaterial } from '@/api/material'
+
 export default {
   data () {
     return {
@@ -76,62 +78,59 @@ export default {
     },
 
     // 点击删除的时候
-    del (row) {
-      this.$confirm('您确定删除吗？', '提示').then(() => {
-        this.$axios({
+    async del (row) {
+      await this.$confirm('您确定删除吗？', '提示')
+      try {
+        await this.$axios({
           url: `/user/images/${row.id}`,
           method: 'delete'
-        }).then(() => {
-          this.getMaterial()
-        }).catch(() => {
-          this.$message.error('删除失败')
         })
-      })
+        this.getMaterial()
+      } catch (error) {
+        this.$message.error('删除失败')
+      }
     },
     // 当点击收藏或者取消的时候
-    collectOrCancel (row) {
-      this.$axios({
-        url: `/user/images/${row.id}`,
-        method: 'put',
-        data: {
-          collect: !row.is_collected // 收藏与否
-        }
-      }).then(() => {
+    async collectOrCancel (row) {
+      try {
+        await this.$axios({
+          url: `/user/images/${row.id}`,
+          method: 'put',
+          data: {
+            collect: !row.is_collected // 收藏与否
+          }
+        })
         this.getMaterial()
-      }).catch(() => {
+      } catch (error) {
         this.$message.error('收藏/取消失败')
-      })
+      }
     },
 
     //   当点击上传素材的时候
-    uploadImg (params) {
-      const data = new FormData()
-      data.append('image', params.file)
-      this.$axios({
-        url: '/user/images', // 请求地址
-        method: 'post',
-        data
-      }).then(() => {
+    async   uploadImg (params) {
+      try {
+        const data = new FormData()
+        data.append('image', params.file)
+        await this.$axios({
+          url: '/user/images', // 请求地址
+          method: 'post',
+          data
+        })
         this.getMaterial()
-      }).catch(() => {
+      } catch (error) {
         this.$message.error('上传失败')
-      })
+      }
     },
     //   在list中获取图片
-    getMaterial () {
-      this.$axios({
-        url: '/user/images', // 请求地址
-        params: {
-          collect: this.activeName === 'collect', // 请求参数
-          per_page: this.page.pageSize,
-          page: this.page.currentPage
-        },
-        data: {}
-      }).then(result => {
-      // 将返回的数据，放在data中
-        this.list = result.data.results
-        this.total = result.data.total_count
+    async getMaterial () {
+      const result = await getMaterial({
+        collect: this.activeName === 'collect', // 请求参数
+        per_page: this.page.pageSize,
+        page: this.page.currentPage
       })
+      // 将返回的数据，放在data中
+      this.list = result.data.results
+      this.total = result.data.total_count
     },
     changeTab () {
       this.getMaterial()

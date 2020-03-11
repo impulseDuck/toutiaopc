@@ -126,8 +126,8 @@ export default {
   // 同意路径下的页面切换时，
   watch: {
     $route: function (to, from) {
-      if (to.params.articleId) {
-        this.getArticleByid(to.params.articleId)// 获取文章id
+      if (to.params.articleID) {
+        this.getArticleByid(to.params.articleID)// 获取文章id
       } else {
         this.publishFrom = {
           title: '', // 文章标题

@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import eventBus from '@/utils/eventBus'
 export default {
   data () {
     return {
@@ -58,6 +59,7 @@ export default {
           method: 'patch', // 类型
           data: this.FormData
         }).then(() => {
+          eventBus.$emit('updateUser')
           this.$message.success('保存用户信息成功')
         }).catch(() => {
           this.$message.error('保存用户信息失败')
@@ -73,6 +75,7 @@ export default {
         method: 'patch',
         data
       }).then(result => {
+        eventBus.$emit('updateUser')
         this.FormData.photo = result.data.photo
       })
     },

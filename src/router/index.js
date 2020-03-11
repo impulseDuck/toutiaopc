@@ -42,6 +42,10 @@ const routes = [
       {
         path: 'account',
         component: () => import('@/views/account')
+      },
+      {
+        path: 'fansInfo',
+        component: () => import('@/views/data')
       }
     ]
   },
